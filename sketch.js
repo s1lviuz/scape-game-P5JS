@@ -32,56 +32,56 @@ function draw() {
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
-    if (player.acceleration.y === 0.1) {
+    if (player.acceleration.y === 0.2) {
       return
     } else {
-      player.acceleration.y = -0.1;
+      player.acceleration.y = -0.2;
     }
   } else if (keyCode === DOWN_ARROW) {
-    if (player.acceleration.y === -0.1) {
+    if (player.acceleration.y === -0.2) {
       return
     } else {
-      player.acceleration.y = 0.1;
+      player.acceleration.y = 0.2;
     }
   } else if (keyCode === RIGHT_ARROW) {
-    if (player.acceleration.x === -0.1) {
+    if (player.acceleration.x === -0.2) {
       return
     } else {
-      player.acceleration.x = 0.1;
+      player.acceleration.x = 0.2;
     }
   } else if (keyCode === LEFT_ARROW) {
-    if (player.acceleration.x === 0.1) {
+    if (player.acceleration.x === 0.2) {
       return
     } else {
-      player.acceleration.x = -0.1;
+      player.acceleration.x = -0.2;
     }
   }
 }
 
 function keyReleased() {
   if (keyCode === UP_ARROW) {
-    if (player.acceleration.y === 0.25) {
+    if (player.acceleration.y === 02) {
       return
     } else {
       player.acceleration.y = 0;
       player.velocity.y = 0;
     }
   } else if (keyCode === DOWN_ARROW) {
-    if (player.acceleration.y === -0.25) {
+    if (player.acceleration.y === -0.2) {
       return
     } else {
       player.acceleration.y = 0;
       player.velocity.y = 0;
     }
   } else if (keyCode === RIGHT_ARROW) {
-    if (player.acceleration.x === -0.25) {
+    if (player.acceleration.x === -0.2) {
       return
     } else {
       player.acceleration.x = 0;
       player.velocity.x = 0;
     }
   } else if (keyCode === LEFT_ARROW) {
-    if (player.acceleration.x === 0.25) {
+    if (player.acceleration.x === 0.2) {
       return
     } else {
       player.acceleration.x = 0;
@@ -168,7 +168,7 @@ class Enemy extends Entity {
 
       let direction = p5.Vector.sub(target.location, this.location);
       direction.normalize();
-      direction.mult(0.1);
+      direction.mult(0.1412);
       
       this.acceleration = direction;
     } else {
