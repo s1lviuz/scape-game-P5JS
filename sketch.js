@@ -1,5 +1,5 @@
 const enemysList = [];
-const enemys = 2;
+const enemys = 5;
 
 function setup() {
   createCanvas(600, 600);
@@ -19,9 +19,13 @@ function draw() {
   rect(0, 0, 599, 450);
 
   const entityList = [player, ...enemysList];
-  entityList.forEach((entity) => {
+  entityList.forEach((entity, index) => {
+    if (index != 0) {
+      entity.checkTarget(player);
+    }
+
     entity.update();
-    entity.checkEdges();
+    entity.checkCollision();
     entity.display();
   })
 }
@@ -56,28 +60,28 @@ function keyPressed() {
 
 function keyReleased() {
   if (keyCode === UP_ARROW) {
-    if (player.acceleration.y === 0.1) {
+    if (player.acceleration.y === 0.25) {
       return
     } else {
       player.acceleration.y = 0;
       player.velocity.y = 0;
     }
   } else if (keyCode === DOWN_ARROW) {
-    if (player.acceleration.y === -0.1) {
+    if (player.acceleration.y === -0.25) {
       return
     } else {
       player.acceleration.y = 0;
       player.velocity.y = 0;
     }
   } else if (keyCode === RIGHT_ARROW) {
-    if (player.acceleration.x === -0.1) {
+    if (player.acceleration.x === -0.25) {
       return
     } else {
       player.acceleration.x = 0;
       player.velocity.x = 0;
     }
   } else if (keyCode === LEFT_ARROW) {
-    if (player.acceleration.x === 0.1) {
+    if (player.acceleration.x === 0.25) {
       return
     } else {
       player.acceleration.x = 0;
@@ -103,7 +107,7 @@ class Entity {
     this.location.add(this.velocity);
   }
   
-  checkEdges() {
+  checkCollision() {
     if (this.location.x > width) {
       this.location.x = 0;
     } else if (this.location.x < 0) {
@@ -141,24 +145,45 @@ class Enemy extends Entity {
     this.visionRange = 75;
     this.hvisionRange = this.visionRange/2;
     this.bodySpace = this.visionRange+5;
-    this.location = createVector(random(this.bodySpace, width - this.bodySpace),random(this.bodySpace, 450 - this.bodySpace));
+    this.location = createVector(random(this.bodySpace, width - this.bodySpace),random(this.bodySpace, (height - 150) - this.bodySpace));
+    this.pursuit = false;
   }
 
   update() {
     super.update();
     if (!this.collide) {
-      this.acceleration = createVector(random(-0.2,0.2),random(-0.2,0.2))
+      if (this.pursuit) {
+        return
+      } else {
+        this.acceleration = createVector(random(-0.2,0.2),random(-0.2,0.2))
+      }
     } 
   }
 
-  checkEdges() {
-    if (this.location.x + this.hvisionRange > width - (this.topspeed + 1) || this.location.x - this.hvisionRange < (this.topspeed + 1)) {
+  checkTarget(target) {
+    let targetDistance = target.location.dist(this.location);
+
+    if (targetDistance - target.hdim <= this.hvisionRange) {
+      this.pursuit = true;
+
+      let direction = p5.Vector.sub(target.location, this.location);
+      direction.normalize();
+      direction.mult(0.1);
+      
+      this.acceleration = direction;
+    } else {
+      this.pursuit = false;
+    }
+  }
+
+  checkCollision() {
+    if (this.location.x + this.hvisionRange >= width - this.velocity.x || this.location.x - this.hvisionRange <= 0) {
       this.velocity.x *= -1;
       this.acceleration.x *= -1;
       this.collide = true;
       return
     } 
-    if (this.location.y + this.hvisionRange > 450 - (this.topspeed + 1) || this.location.y - this.hvisionRange < (this.topspeed + 1)) {
+    if (this.location.y + this.hvisionRange >= (height - 150) - this.velocity.y || this.location.y - this.hvisionRange <= 0) {
       this.velocity.y *= -1;
       this.acceleration.y *= -1;
       this.collide = true;
