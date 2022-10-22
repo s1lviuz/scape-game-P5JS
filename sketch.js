@@ -22,6 +22,7 @@ function draw() {
   entityList.forEach((entity, index) => {
     if (index != 0) {
       entity.checkTarget(player);
+      entity.checkCatch(player);
     }
 
     entity.update();
@@ -32,56 +33,56 @@ function draw() {
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
-    if (player.acceleration.y === 0.2) {
+    if (player.acceleration.y === 0.1) {
       return
     } else {
-      player.acceleration.y = -0.2;
+      player.acceleration.y = -0.1;
     }
   } else if (keyCode === DOWN_ARROW) {
-    if (player.acceleration.y === -0.2) {
+    if (player.acceleration.y === -0.1) {
       return
     } else {
-      player.acceleration.y = 0.2;
+      player.acceleration.y = 0.1;
     }
   } else if (keyCode === RIGHT_ARROW) {
-    if (player.acceleration.x === -0.2) {
+    if (player.acceleration.x === -0.1) {
       return
     } else {
-      player.acceleration.x = 0.2;
+      player.acceleration.x = 0.1;
     }
   } else if (keyCode === LEFT_ARROW) {
-    if (player.acceleration.x === 0.2) {
+    if (player.acceleration.x === 0.1) {
       return
     } else {
-      player.acceleration.x = -0.2;
+      player.acceleration.x = -0.1;
     }
   }
 }
 
 function keyReleased() {
   if (keyCode === UP_ARROW) {
-    if (player.acceleration.y === 02) {
+    if (player.acceleration.y === 0.25) {
       return
     } else {
       player.acceleration.y = 0;
       player.velocity.y = 0;
     }
   } else if (keyCode === DOWN_ARROW) {
-    if (player.acceleration.y === -0.2) {
+    if (player.acceleration.y === -0.25) {
       return
     } else {
       player.acceleration.y = 0;
       player.velocity.y = 0;
     }
   } else if (keyCode === RIGHT_ARROW) {
-    if (player.acceleration.x === -0.2) {
+    if (player.acceleration.x === -0.25) {
       return
     } else {
       player.acceleration.x = 0;
       player.velocity.x = 0;
     }
   } else if (keyCode === LEFT_ARROW) {
-    if (player.acceleration.x === 0.2) {
+    if (player.acceleration.x === 0.25) {
       return
     } else {
       player.acceleration.x = 0;
@@ -141,8 +142,8 @@ class Enemy extends Entity {
   
   constructor() {
     super();
-    this.fillColor = 'red';
-    this.visionRange = 75;
+    this.fillColor = 'orange';
+    this.visionRange = 100;
     this.hvisionRange = this.visionRange/2;
     this.bodySpace = this.visionRange+5;
     this.location = createVector(random(this.bodySpace, width - this.bodySpace),random(this.bodySpace, (height - 150) - this.bodySpace));
@@ -168,7 +169,7 @@ class Enemy extends Entity {
 
       let direction = p5.Vector.sub(target.location, this.location);
       direction.normalize();
-      direction.mult(0.1412);
+      direction.mult(0.1);
       
       this.acceleration = direction;
     } else {
@@ -176,14 +177,26 @@ class Enemy extends Entity {
     }
   }
 
+  checkCatch(target) {
+    let targetDistance = target.location.dist(this.location);
+
+    if (targetDistance - target.hdim <= this.hdim) {
+      noLoop();
+      fill('black');
+      textSize(24);
+      textAlign(CENTER);
+      text('Você foi pego!', width/2, height/4);
+    }
+  }
+
   checkCollision() {
-    if (this.location.x + this.hvisionRange >= width - this.velocity.x || this.location.x - this.hvisionRange <= 0) {
+    if (this.location.x + this.hdim >= width - this.velocity.x || this.location.x - this.hdim <= 0) {
       this.velocity.x *= -1;
       this.acceleration.x *= -1;
       this.collide = true;
       return
     } 
-    if (this.location.y + this.hvisionRange >= (height - 150) - this.velocity.y || this.location.y - this.hvisionRange <= 0) {
+    if (this.location.y + this.hdim >= (height - 150) - this.velocity.y || this.location.y - this.hdim <= 0) {
       this.velocity.y *= -1;
       this.acceleration.y *= -1;
       this.collide = true;
@@ -193,9 +206,9 @@ class Enemy extends Entity {
   }
 
   display() {
-    stroke(0);
-    fill(255,255,255,0);
-    ellipse(this.location.x, this.location.y, this.visionRange, this.visionRange);
+    // stroke(0);
+    // fill(255,255,255,0);
+    // ellipse(this.location.x, this.location.y, this.visionRange, this.visionRange);
     noStroke();
     fill(this.fillColor);
     ellipse(this.location.x, this.location.y, this.dim, this.dim);
