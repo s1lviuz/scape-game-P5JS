@@ -6,11 +6,15 @@ html, body {
 }
 
 body {
-  background-color: black;
+  background-color: #0D1117;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1%;
+  padding: 1px;
 }
 
 canvas {
